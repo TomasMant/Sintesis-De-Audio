@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Sintetizador Piano</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="piano.css" />
+    <!-- Script -->
+    <script src="piano.js" defer></script>
+  </head>
+
+  <body>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+      <a class="navbar-brand" href="../index.html">Inicio</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNav"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="../aditiva/aditiva.html">Síntesis Aditiva</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../sustractiva/sustractiva.html">Síntesis Sustractiva</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="piano.html">Piano</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- CONTENEDOR CENTRAL -->
+    <div class="wrapper">
+      <!-- HEADER CONTROLES -->
+      <header>
+        <h2>Sintetizador Piano</h2>
+
+        <div class="column volume-slider">
+          <label for="volumeControl">Volume</label>
+          <input type="range" id="volumeControl" min="0" max="1" step="any" value="0.5" />
+        </div>
+
+        <div class="column keys-checkbox">
+          <label for="showKeys">Show Keys</label>
+          <input type="checkbox" id="showKeys" checked />
+        </div>
+
+        <div class="column waveform-selector">
+          <label for="waveformType">Waveform</label>
+          <select id="waveformType">
+            <option value="sine">Sine</option>
+            <option value="square">Square</option>
+            <option value="triangle">Triangle</option>
+            <option value="sawtooth">Sawtooth</option>
+          </select>
+        </div>
+
+        <div class="column harmonics">
+          <span>Harmonics:</span>
+          <label><input type="checkbox" id="harm1" checked /> 1</label>
+          <label><input type="checkbox" id="harm2" checked /> 2</label>
+          <label><input type="checkbox" id="harm3" checked /> 3</label>
+        </div>
+
+        <div class="column filter-cutoff">
+          <label for="filterCutoff">Low-pass Filter</label>
+          <input type="range" id="filterCutoff" min="100" max="10000" step="1" value="5000" />
+        </div>
+
+        <div class="column noise-controls">
+          <label for="noiseType">Noise Type</label>
+          <select id="noiseType">
+            <option value="none" selected>None</option>
+            <option value="white">White</option>
+            <option value="pink">Pink</option>
+          </select>
+
+          <label for="noiseVolume">Noise Volume</label>
+          <input type="range" id="noiseVolume" min="0" max="1" step="any" value="0" />
+        </div>
+      </header>
+
+      <!-- TECLADO PIANO -->
+      <ul class="piano-keys">
+        <li class="key white" data-key="a"><span>a</span></li>
+        <li class="key black" data-key="w"><span>w</span></li>
+        <li class="key white" data-key="s"><span>s</span></li>
+        <li class="key black" data-key="e"><span>e</span></li>
+        <li class="key white" data-key="d"><span>d</span></li>
+        <li class="key white" data-key="f"><span>f</span></li>
+        <li class="key black" data-key="t"><span>t</span></li>
+        <li class="key white" data-key="g"><span>g</span></li>
+        <li class="key black" data-key="y"><span>y</span></li>
+        <li class="key white" data-key="h"><span>h</span></li>
+        <li class="key black" data-key="u"><span>u</span></li>
+        <li class="key white" data-key="j"><span>j</span></li>
+        <li class="key white" data-key="k"><span>k</span></li>
+        <li class="key black" data-key="o"><span>o</span></li>
+        <li class="key white" data-key="l"><span>l</span></li>
+        <li class="key black" data-key="p"><span>p</span></li>
+        <li class="key white" data-key=";"><span>;</span></li>
+      </ul>
+    </div>
+
+    <!-- Bootstrap JS (opcional, solo para navbar colapsable en móviles) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Síntesis Sustractiva</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="sustractiva.css" />
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Síntesis</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="../index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="../aditiva/aditiva.html">Aditiva</a></li>
+          <li class="nav-item"><a class="nav-link active" href="sustractiva.html">Sustractiva</a></li>
+          <li class="nav-item"><a class="nav-link" href="../piano/piano.html">Sintetizador</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido -->
+  <div class="container mt-5">
+    <h1 class="text-center">Síntesis Sustractiva</h1>
+    <p class="text-center">Selecciona una fuente de sonido y ajusta los parámetros del filtro para modificar el timbre.</p>
+
+    <div class="card p-4">
+      <div class="row">
+        <!-- Fuente de sonido -->
+        <div class="col-md-6 mb-3">
+          <label for="sourceType" class="form-label">Fuente de sonido</label>
+          <select id="sourceType" class="form-select">
+            <option value="sawtooth">Diente de sierra</option>
+            <option value="square">Cuadrada</option>
+            <option value="triangle">Triangular</option>
+            <option value="sine">Seno</option>
+            <option value="white">Ruido blanco</option>
+            <option value="pink">Ruido rosa</option>
+          </select>
+        </div>
+
+        <!-- Frecuencia base -->
+        <div class="col-md-6 mb-3">
+          <label for="baseFreq" class="form-label">Frecuencia base (Hz)</label>
+          <input type="range" class="form-range" id="baseFreq" min="50" max="1000" value="440">
+          <p>Frecuencia actual: <span id="baseFreqVal">440</span> Hz</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Filtro: Frecuencia de corte -->
+        <div class="col-md-6 mb-3">
+          <label for="cutoffFreq" class="form-label">Frecuencia de corte del filtro (Hz)</label>
+          <input type="range" class="form-range" id="cutoffFreq" min="100" max="10000" value="2000">
+          <p>Frecuencia de corte: <span id="cutoffFreqVal">2000</span> Hz</p>
+        </div>
+
+        <!-- Filtro: Resonancia -->
+        <div class="col-md-6 mb-3">
+          <label for="resonance" class="form-label">Resonancia (Q)</label>
+          <input type="range" class="form-range" id="resonance" min="0.1" max="20" step="0.1" value="1">
+          <p>Resonancia: <span id="resonanceVal">1</span></p>
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div class="text-center">
+        <button class="btn btn-success me-2" id="play">Reproducir</button>
+        <button class="btn btn-danger" id="stop">Detener</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="sustractiva.js"></script>
+</body>
+</html>
+
+
