@@ -4,8 +4,8 @@ const filterCutoffSlider = document.getElementById("filterCutoff");
 const volumeSlider = document.querySelector(".volume-slider input");
 const keysCheckbox = document.querySelector(".keys-checkbox input");
 const waveformSelector = document.getElementById("waveformType");
-const noiseTypeSelect = document.getElementById("noiseType");
-const noiseVolumeSlider = document.getElementById("noiseVolume");
+const baseFreqInput = document.getElementById("baseFreq");
+const harmonicsWaveformSelector = document.getElementById("harmonicsWaveform");
 
 // Contexto y nodos audio
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -20,57 +20,61 @@ filterNode.frequency.value = filterCutoffSlider.value || 5000;
 gainNode.connect(filterNode);
 filterNode.connect(audioCtx.destination);
 
-// Frecuencias notas
-const noteFrequencies = {
-  a: 440.00, w: 466.16, s: 493.88, e: 523.25, d: 554.37, f: 587.33,
-  t: 622.25, g: 659.25, y: 698.46, h: 739.99, u: 783.99, j: 830.61,
-  k: 880.00, o: 932.33, l: 987.77, p: 1046.50, ";": 1108.73
+// Ratios de notas basado en la frecuencia base
+const noteRatios = {
+  a: 1,
+  w: Math.pow(2, 1/12),
+  s: Math.pow(2, 2/12),
+  e: Math.pow(2, 3/12),
+  d: Math.pow(2, 4/12),
+  f: Math.pow(2, 5/12),
+  t: Math.pow(2, 6/12),
+  g: Math.pow(2, 7/12),
+  y: Math.pow(2, 8/12),
+  h: Math.pow(2, 9/12),
+  u: Math.pow(2, 10/12),
+  j: Math.pow(2, 11/12),
+  k: 2,             // una octava arriba
+  o: Math.pow(2, 13/12),
+  l: Math.pow(2, 14/12),
+  p: Math.pow(2, 15/12),
+  ";": Math.pow(2, 16/12)
 };
 
 let activeOscillators = {};
+let currentWaveform = waveformSelector.value;
 
-// Ruido blanco
-function createWhiteNoise() {
-  const bufferSize = 2 * audioCtx.sampleRate;
-  const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-  const output = noiseBuffer.getChannelData(0);
-  for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
-  const whiteNoise = audioCtx.createBufferSource();
-  whiteNoise.buffer = noiseBuffer;
-  whiteNoise.loop = true;
-  return whiteNoise;
-}
-
-// Ruido rosa
-function createPinkNoise() {
-  const bufferSize = 2 * audioCtx.sampleRate;
-  const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-  const output = noiseBuffer.getChannelData(0);
-  let b0,b1,b2,b3,b4,b5,b6;
-  b0=b1=b2=b3=b4=b5=b6=0.0;
-  for(let i=0;i<bufferSize;i++){
-    let white = Math.random()*2-1;
-    b0=0.99886*b0+white*0.0555179;
-    b1=0.99332*b1+white*0.0750759;
-    b2=0.96900*b2+white*0.1538520;
-    b3=0.86650*b3+white*0.3104856;
-    b4=0.55000*b4+white*0.5329522;
-    b5=-0.7616*b5-white*0.0168980;
-    output[i]=b0+b1+b2+b3+b4+b5+b6+white*0.5362;
-    output[i]*=0.11;
-    b6=white*0.115926;
+function resumeAudioContext() {
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
   }
-  const pinkNoise=audioCtx.createBufferSource();
-  pinkNoise.buffer=noiseBuffer;
-  pinkNoise.loop=true;
-  return pinkNoise;
 }
 
-// Tocar nota con armónicos y ruido si está activado
-function playTone(key) {
-  if (!noteFrequencies[key] || activeOscillators[key]) return;
+function updateFrequencyDisplay(freq) {
+  const freqBar = document.getElementById("freqBar");
+  const freqValue = document.getElementById("freqValue");
 
-  const fundamental = noteFrequencies[key];
+  if (!freqBar || !freqValue) return;
+
+  const minFreq = 100;
+  const maxFreq = 1200;
+  const clamped = Math.min(Math.max(freq, minFreq), maxFreq);
+  const percentage = ((clamped - minFreq) / (maxFreq - minFreq)) * 100;
+
+  freqBar.style.width = `${percentage}%`;
+  freqValue.textContent = `Frecuencia: ${freq.toFixed(2)} Hz`;
+}
+
+// Función para tocar nota con armónicos
+function playTone(key) {
+  if (!noteRatios[key] || activeOscillators[key]) return;
+
+  resumeAudioContext();
+
+  const baseFrequency = parseFloat(baseFreqInput.value) || 440;
+  const fundamental = baseFrequency * noteRatios[key];
+
+  updateFrequencyDisplay(fundamental);
 
   const harmonics = [];
   if (document.getElementById("harm1").checked) harmonics.push({ ratio: 1, gain: 1.0 });
@@ -78,38 +82,23 @@ function playTone(key) {
   if (document.getElementById("harm3").checked) harmonics.push({ ratio: 3, gain: 0.25 });
   if (harmonics.length === 0) return;
 
-  const waveform = waveformSelector ? waveformSelector.value : "sine";
-
   const oscillators = [];
 
-  // Crear osciladores armónicos
-  harmonics.forEach(h => {
+  harmonics.forEach((h, index) => {
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
-    osc.type = waveform;
+
+    // Primer armónico usa currentWaveform, otros usan lo que el usuario seleccione en harmonicsWaveformSelector
+    osc.type = (index === 0) ? currentWaveform : (harmonicsWaveformSelector ? harmonicsWaveformSelector.value : "triangle");
+
     osc.frequency.value = fundamental * h.ratio;
     gain.gain.value = h.gain;
+
     osc.connect(gain).connect(gainNode);
     osc.start();
+
     oscillators.push({ osc, gain });
   });
-
-  // Añadir ruido si activado
-  const selectedNoise = noiseTypeSelect.value;
-  const noiseVol = parseFloat(noiseVolumeSlider.value);
-  if (selectedNoise !== "none" && noiseVol > 0) {
-    let noiseOsc = null;
-    if (selectedNoise === "white") noiseOsc = createWhiteNoise();
-    else if (selectedNoise === "pink") noiseOsc = createPinkNoise();
-
-    if (noiseOsc) {
-      const noiseGain = audioCtx.createGain();
-      noiseGain.gain.value = noiseVol;
-      noiseOsc.connect(noiseGain).connect(gainNode);
-      noiseOsc.start();
-      oscillators.push({ osc: noiseOsc, gain: noiseGain, isNoise: true });
-    }
-  }
 
   activeOscillators[key] = oscillators;
 
@@ -117,7 +106,7 @@ function playTone(key) {
   if (keyElem) keyElem.classList.add("active");
 }
 
-// Detener nota y ruido asociado
+// Función para detener nota
 function stopTone(key) {
   const oscGroup = activeOscillators[key];
   if (!oscGroup) return;
@@ -164,6 +153,9 @@ filterCutoffSlider.addEventListener("input", e => {
   filterNode.frequency.setTargetAtTime(e.target.value, audioCtx.currentTime, 0.01);
 });
 
-
+// Actualizar waveform solo para futuras notas, no detener las activas
+waveformSelector.addEventListener("change", () => {
+  currentWaveform = waveformSelector.value;
+});
 
 

@@ -221,3 +221,30 @@ header .harmonics label {
   }
 }
 
+.frequency-display {
+  margin-top: 20px;
+  color: white;
+  text-align: center;
+}
+
+.bar-container {
+  width: 100%;
+  max-width: 500px;
+  height: 20px;
+  background-color: #333;
+  border-radius: 10px;
+  margin: 10px auto;
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(to right, #56a0ff, #3be8b0);
+  transition: width 0.3s ease;
+}
+
+.freq-value {
+  font-size: 1.2rem;
+  margin-top: 5px;
+}

@@ -13,6 +13,31 @@
     <link rel="stylesheet" href="piano.css" />
     <!-- Script -->
     <script src="piano.js" defer></script>
+    <style>
+      /* Estilos mínimos para la barra de frecuencia y texto */
+      #frequencyDisplay {
+        margin-top: 15px;
+        background: #333;
+        border-radius: 10px;
+        height: 25px;
+        width: 100%;
+        max-width: 960px;
+        overflow: hidden;
+      }
+      #freqBar {
+        height: 100%;
+        background: #56a0ff;
+        width: 0%;
+        transition: width 0.1s ease;
+      }
+      #freqValue {
+        color: white;
+        margin-top: 5px;
+        font-weight: 600;
+        font-family: 'Poppins', sans-serif;
+        max-width: 960px;
+      }
+    </style>
   </head>
 
   <body>
@@ -68,6 +93,17 @@
           </select>
         </div>
 
+        <div class="column harmonics-waveform-selector">
+  <label for="harmonicsWaveform">Armónicos Waveform</label>
+  <select id="harmonicsWaveform">
+    <option value="sine">Sine</option>
+    <option value="square">Square</option>
+    <option value="triangle" selected>Triangle</option>
+    <option value="sawtooth">Sawtooth</option>
+  </select>
+</div>
+
+
         <div class="column harmonics">
           <span>Harmonics:</span>
           <label><input type="checkbox" id="harm1" checked /> 1</label>
@@ -80,16 +116,9 @@
           <input type="range" id="filterCutoff" min="100" max="10000" step="1" value="5000" />
         </div>
 
-        <div class="column noise-controls">
-          <label for="noiseType">Noise Type</label>
-          <select id="noiseType">
-            <option value="none" selected>None</option>
-            <option value="white">White</option>
-            <option value="pink">Pink</option>
-          </select>
-
-          <label for="noiseVolume">Noise Volume</label>
-          <input type="range" id="noiseVolume" min="0" max="1" step="any" value="0" />
+        <div class="column base-frequency">
+          <label for="baseFreq">Base Frequency (A)</label>
+          <input type="range" id="baseFreq" min="20" max="2000" value="440" step="1" />
         </div>
       </header>
 
@@ -113,6 +142,12 @@
         <li class="key black" data-key="p"><span>p</span></li>
         <li class="key white" data-key=";"><span>;</span></li>
       </ul>
+
+      <!-- Barra y texto para frecuencia -->
+      <div id="frequencyDisplay">
+        <div id="freqBar"></div>
+      </div>
+      <div id="freqValue">Frecuencia: -- Hz</div>
     </div>
 
     <!-- Bootstrap JS (opcional, solo para navbar colapsable en móviles) -->
